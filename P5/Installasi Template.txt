@@ -1,0 +1,1 @@
+1. Langkah pertama installasi AdminLTE pada Laravel, ketikkan code berikut pada Terminal:
