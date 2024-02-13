@@ -1,1 +1,33 @@
 1. Langkah pertama installasi AdminLTE pada Laravel, ketikkan code berikut pada Terminal:
+composer require jeroennoten/laravel-adminlte
+
+2. Langkah kedua installasi AdminLTE pada Laravel, ketikkan code berikut pada Terminal:
+php artisan adminlte:install
+
+3. langkah ke-3 ini kita akan menggunakan laravel ui untuk mengurus halaman  admin (login,register,dan lain-lain). Jalankan perintah berikut untuk melakukan  instalasi laravel ui seperti perintah di bawah ini:
+composer require laravel/ui
+
+4. Langkah ke-4 adalah mengenerate controller dan menginstall user interface(ui) auth untuk otentikasi user, register dan lain-lain dengan perintah di bawah ini:
+php artisan ui:controllers
+
+php artisan ui:auth
+
+5. Langkah	ke-5	menginstall	adminLTEnya	secara	interaktif	dengan	menjawab pertanyaan-pertanyaan yang ada, dengan perintah di bawah ini:
+php artisan adminlte:install --interactive
+> all "y"
+
+6. Langkah ke-6 menginstall plugin adminLTE dengan perintah di bawah ini:
+php artisan adminlte:plugins install
+
+7. Langkah ke-7 menginstall main_views dan auth_views dengan perintah di bawah ini:
+php artisan adminlte:install --only=main_views
+
+php artisan adminlte:install --only=auth_views
+> y
+
+8. Langkah ke-8 untuk keperluan login, register dan lain-lain, Langkah selanjutnya kita  lakukan migrasi database. Dengan migrasi database maka secara otomatis akan terbentuk  tabel user pada database yang sudah kita koneksikan.
+php artisan migrate
+
+
+
+
