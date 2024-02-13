@@ -25,7 +25,7 @@ php artisan adminlte:install --only=main_views
 php artisan adminlte:install --only=auth_views
 > y
 
-8. Langkah ke-8 untuk keperluan login, register dan lain-lain, Langkah selanjutnya kita  lakukan migrasi database. Dengan migrasi database maka secara otomatis akan terbentuk  tabel user pada database yang sudah kita koneksikan.
+8. Langkah ke-8 untuk keperluan login, register dan lain-lain, Langkah selanjutnya kita  lakukan migrasi database. Sebelum melakukan migrasi, terlebih dahulu membuat database yang hendak dihubungkan dan jangan lupa untuk menayamakan nama database di file .env, Dengan migrasi database maka secara otomatis akan terbentuk  tabel user pada database yang sudah kita koneksikan.
 php artisan migrate
 
 
