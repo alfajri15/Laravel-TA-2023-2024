@@ -1,0 +1,182 @@
+Koneksi Database dan Eloquent ORM
+
+1. Pertama kita perlu membuat sebuah file Migration, file ini nantinya bisa dieksekusi  agar dapat mengubah database 
+sesuai perintah yang kita tuliskan di file tersebut.  
+Untuk membuat file Migration kita gunakan perintah di bawah ini:
+php artisan make:migration create_pegawai_table
+
+2. Setelah membuat file migration tabel pegawai, langkah selanjutnya adalah membuat
+field/kolom pada tabel pegawai seperti kode di bawah ini:
+
+public function up(){
+Schema::create('pegawai', function (Blueprint $table) {
+$table->increments('id');
+$table->integer('nip');
+$table->string('nama',50);
+$table->text('alamat');
+$table->string('email')->unique();
+$table->timestamps();
+});
+}
+
+3. Setelah membuat kolom-kolom pada tabel pegawai, Langkah selanjutnya adalah  mengeksekusi migration. 
+Buka terminal dan masuk ke root path aplikasi Laravel kita,  jalankan perintah di bawah ini:
+php artisan migrate
+
+4. Untuk membuat sedding dari tabel pegawai yang sudah ada, caranya adalah buka terminal
+dan masuk ke root path aplikasi Laravel kita, jalankan perintah di bawah ini:
+php artisan make:seeder PegawaiSeeder
+
+5. Untuk mengisi/mengenerate data di tabel pegawai, caranya adalah buka file  PegawaiSeeder.php yang berada di folder seeders, lalu isi data seperti kode program di  bawah ini:
+use DB; //tambahkan kode ini di atasclass PegawaiSeeder
+//di dalam fungsi run isi data-data pegawai  public function run(){
+for ($i=0; $i < 10; $i++) 
+{  DB::table('pegawai')->insert(  
+[
+'nip' => rand(),
+'nama' => uniqid('nama_'),  
+'alamat' => uniqid('alamat_'),  
+'email' => uniqid().'@gmail.com',  
+'created_at' => new \DateTime,  
+'updated_at' => null,
+]);
+}
+}
+
+6. Setelah mengisi data pegawai sesuai dengan kolom-kolomnya, langkah selanjutnya  adalah mengeksekusi data seedingnya. Buka terminal dan masuk ke root path aplikasi  Laravel kita, jalankan perintah di bawah ini:
+php artisan db:seed --class=PegawaiSeeder
+
+7. Untuk membuat model dari tabel pegawai yang sudah tersedia, buka terminal dan masuk  ke root path aplikasi Laravel kita, jalankan perintah di bawah ini:
+php artisan make:model Pegawai
+
+8. 
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Pegawai extends Model
+{
+    use HasFactory;
+    //koneksi ke tabel pegawai
+    protected $table = 'pegawai';
+}
+
+9. Langkah selanjutnya adalah membuat controller, buka terminal dan masuk ke root path  aplikasi Laravel kita, jalankan perintah di bawah ini:
+php artisan make:controller PegawaiController --resource
+
+10. 
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use DB;
+use App\Models\Pegawai;
+
+class PegawaiController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index() //method untuk menampilkan data Pegawai
+    {
+        //dapatkan seluruh data pegawai dengan query builder
+        $ar_pegawai = DB::table('pegawai')->get();
+        //arahkan ke data peagawai
+        return view('pegawai.index',compact('ar_pegawai'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+}
+
+11. Buatlah Tampilan Pegawai di lokasi resources/views/pegawai/index.blade.php
+@extends('adminlte::page')  
+@section('title', 'Data Pegawai')  
+@section('content_header')
+<h1>Data Pegawai</h1>  
+@stop  
+@section('content')
+<p>Welcome to this beautiful admin panel.</p>
+@php
+$ar_judul = ['No','NIP','Nama','Alamat','Email'];
+$no = 1;
+@endphp
+<table class="table table-striped">
+    <thead>
+        <tr>
+            @foreach($ar_judul as $jdl)
+                <th>{{ $jdl }}</th>
+            @endforeach
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($ar_pegawai as $peg)
+        <tr>
+            <td>{{ $no++ }}</td>
+            <td>{{ $peg->nip }}</td>
+            <td>{{ $peg->nama }}</td>
+            <td>{{ $peg->alamat }}</td>
+            <td>{{ $peg->email }}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+@stop
+
+@endsection
+
+@section('css')
+<link rel="stylesheet" href="/css/admin_custom.css">
+@stop
+@section('js')
+<script> console.log('Hi!'); </script>
+@stop
