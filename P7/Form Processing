@@ -1,0 +1,133 @@
+1. PegawaiController
+public function create()
+    {
+        //mengarahkan ke hal form input
+        return view('pegawai.form');
+
+    }
+
+2. Resources/Views/form
+@extends('adminlte::page')  
+@section('title', 'Form Pegawai')  
+@section('content_header')
+<h1>Form Pegawai</h1>  
+@stop  
+@section('content')
+
+@if($errors->any())
+<div class="alert alert-danger">
+<ul>
+@foreach($errors->all() as $error)
+<li>{{ $error }}</li>  
+@endforeach
+</ul>
+</div>
+@endif
+<div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-user-tie"></i></h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form action="{{ route('pegawai.store') }}" method="POST">
+              @csrf
+                <div class="card-body">
+                <div class="form-group">
+                    <label for="nip">Nip</label>
+                    <input type="text" class="form-control" name="nip" placeholder="Nip">
+                  </div>
+                  <div class="form-group">
+                    <label for="nama">Nama</label>
+                    <input type="text" class="form-control" name="nama" placeholder="Nama">
+                  </div>
+                  <div class="form-group">
+                        <label>Alamat</label>
+                        <textarea class="form-control" rows="3" name="alamat" placeholder="Alamat"></textarea>
+                      </div>
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="Email">
+                  </div>
+                  
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-info">Submit</button>
+                  <a class="btn btn-info float-right" href="pegawai"  role="button">Back&nbsp;&nbsp;<i class="fa fa-arrow-left"></i></a>
+                </div>
+              </form>
+            </div>
+            <!-- /.card -->
+            @stop
+
+
+@section('css')
+<link rel="stylesheet" href="/css/admin_custom.css">
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css')}}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css')}}">
+@stop
+@section('js')
+<script>
+$(function () {
+  bsCustomFileInput.init();
+});
+</script>
+<!-- jQuery -->
+<script src="{{ asset('plugins/jquery/jquery.min.js')}}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- bs-custom-file-input -->
+<script src="{{ asset('plugins/bs-custom-file-input/bs-custom-file-input.min.js')}}"></script>
+<!-- AdminLTE App -->
+<script src="{{ asset('dist/js/adminlte.min.js')}}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ asset('dist/js/demo.js')}}"></script>
+<!-- Page specific script -->
+@stop
+
+
+3. PegawaiController
+public function store(Request $request)
+    {
+        //proses validasi data
+    $validasi = $request->validate(
+        [
+            'nip'=>'required|unique:pegawai|numeric',  
+            'nama'=>'required|max:50',  
+            'alamat'=>'required',
+            'email'=>'required|max:50|regex:/(.+)@(.+)\.(.+)/i',
+        ],
+        //menampilkan pesan kesalahan
+        [
+            'nip.required'=>'NIP Wajib di Isi',  
+            'nip.unique'=>'NIP Tidak Boleh Sama',  
+            'nip.numeric'=>'Harus Berupa Angka',  
+            'nama.required'=>'Nama Wajib di Isi',  
+            'alamat.required'=>'Alamat Wajib di Isi',  
+            'email.required'=>'Email Wajib di	Isi',  
+            'email.regex'=>'Harus berformat email',
+        ],
+        );
+        //proses input data tangkap request dari form input
+        DB::table('pegawai')->insert(
+        [
+            'nip'=>$request->nip,  
+            'nama'=>$request->nama,  
+            'alamat'=>$request->alamat,  
+            'email'=>$request->email,
+        ]
+        );
+        //landing page
+        return redirect('/pegawai');
+        }
+
+4. Web.php
+//Route Form Pegawai
+Route::get('/form_pegawai',[PegawaiController::class, 'create']);
+
+Route::post('/form_Pegawai', [PegawaiController::class, 'store'])->name('pegawai.store');
