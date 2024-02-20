@@ -1,0 +1,362 @@
+1. Membuat Entity
+- php artisan make:migration create_pengarang_table 
+- php artisan make:migration create_penerbit_table
+- php artisan make:migration create_kategori_table 
+- php artisan make:migration create_buku_table
+
+2. Update di Folder Migrations
+public function up(): void
+    {
+        Schema::create('pengarang', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('nama',45);
+            $table->string('email',45);
+            $table->string('hp',15);
+            $table->string('foto',45);
+            $table->timestamps();
+        });
+    }
+
+=============================
+
+public function up(): void
+    {
+        Schema::create('penerbit', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('nama',45);
+            $table->text('alamat');
+            $table->string('email',45);
+            $table->string('website',45);
+            $table->string('telp',15);
+            $table->string('cp',45);
+            $table->timestamps();
+        });
+    }
+
+=============================
+
+public function up(): void
+    {
+        Schema::create('kategori', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('nama',45);
+            $table->timestamps();
+        });
+    }
+
+=====================================
+
+public function up(): void
+    {
+        Schema::create('buku', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('isbn',100);
+            $table->string('judul',100);
+            $table->string('tahun_cetak',45);
+            $table->integer('stok');
+            $table->integer('idpenerbit');
+            $table->integer('idpengarang');
+            $table->string('cover',45);
+            $table->integer('kategori_id');
+            $table->timestamps();
+        });
+    }
+
+========================================
+
+
+3. melakukan migration
+php artisan migrate
+
+4. Pembuatan Seeder
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:seeder PengarangSeeder
+
+   INFO  Seeder [D:\Xampp\htdocs\LaravelApp\database\seeders\PengarangSeeder.php] created successfully.  
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:seeder PenerbitSeeder 
+
+   INFO  Seeder [D:\Xampp\htdocs\LaravelApp\database\seeders\PenerbitSeeder.php] created successfully.   
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:seeder KategoriSeeder
+
+   INFO  Seeder [D:\Xampp\htdocs\LaravelApp\database\seeders\KategoriSeeder.php] created successfully.   
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:seeder BukuSeeder    
+
+   INFO  Seeder [D:\Xampp\htdocs\LaravelApp\database\seeders\BukuSeeder.php] created successfully.   
+
+5. Update File Seeder
+- PengarangSeeder
+use DB;
+public function run(): void
+    {
+        DB::table('pengarang')->insert([
+            [
+                'nama'=>'Deden Hamdani','email'=>'deden@gmail.com','hp'=>'0857123456','foto'=>'a.jpg',
+            ],
+            [
+                'nama'=>'Dedi Iskandar','email'=>'dedi@gmail.com','hp'=>'0857789456','foto'=>'b.jpg',
+            ],
+            [
+                'nama'=>'Siti Aminah','email'=>'siti@gmail.com','hp'=>'0813789456','foto'=>'c.jpg',
+            ]
+        ]);
+    }
+
+- PenerbitSeeder
+use DB;
+public function run(): void
+    {
+        for ($i=0; $i < 10; $i++){
+            DB::table('penerbit')->insert([
+                'nama' => uniqid('nama_'),
+                'alamat' => uniqid('alamat_'),
+                'email' => uniqid().'@gmail.com',
+                'website' => uniqid('www').'.com',
+                'telp' => '021-'.rand(),
+                'cp' => uniqid('cp_')
+            ]);
+        }
+    }
+
+- KategoriSeeder
+use DB;
+public function run(): void
+    {
+        DB::table('kategori')->insert([
+            [
+                'nama' => 'Sejarah'
+            ],
+            [
+                'nama' => 'Sosial & Politik'
+            ],
+            [
+                'nama' => 'Pertanian'
+            ],
+        ]);
+    }
+
+- BukuSeeder
+use DB;
+public function run(): void
+    {
+        DB::table('buku')->insert([
+            [
+                'isbn' => '111',
+                'judul' => 'Sejarah Kemerdekaan RI',
+                'tahun_cetak' => 2021,
+                'stok' => 10,
+                'idpengarang' => 1,
+                'idpenerbit' => 2,
+                'kategori_id' => 1
+            ],
+            [
+                'isbn' => '112',
+                'judul' => 'Menanam Jagung Unggul',
+                'tahun_cetak' => 2021,
+                'stok' => 15,
+                'idpengarang' => 2,
+                'idpenerbit' => 1,
+                'kategori_id' => 3
+            ],
+        ]);
+    }
+
+6. eksekusi data seeder
+- php artisan db:seed --class=PengarangSeeder
+- php artisan db:seed --class=PenerbitSeeder
+- php artisan db:seed --class=KategoriSeeder
+- php artisan db:seed --class=BukuSeeder
+
+7. Pembuatan Models
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:model Pengarang
+
+   INFO  Model [D:\Xampp\htdocs\LaravelApp\app\Models\Pengarang.php] created successfully.  
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:model Penerbit 
+
+   INFO  Model [D:\Xampp\htdocs\LaravelApp\app\Models\Penerbit.php] created successfully.  
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:model Kategori
+
+   INFO  Model [D:\Xampp\htdocs\LaravelApp\app\Models\Kategori.php] created successfully.  
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:model Buku    
+   INFO  Model [D:\Xampp\htdocs\LaravelApp\app\Models\Buku.php] created successfully.
+
+8. Update FIle Models
+- Pengarang.php
+class Pengarang extends Model
+{
+    use HasFactory;
+    //tambahkan mapping ke table pengarang
+    protected $table = 'pengarang';
+}
+
+-Penerbit.php
+class Penerbit extends Model
+{
+    use HasFactory;
+    //tambahkan mapping ke table penerbit
+    protected $table = 'penerbit';
+}
+
+- Kategori.php
+class Kategori extends Model
+{
+    use HasFactory;
+    //tambahkan mapping ke table kategori
+    protected $table = 'kategori';
+}
+
+- Buku.php
+class Buku extends Model
+{
+    use HasFactory;
+    //tambahkan mapping ke table buku
+    protected $table = 'buku';
+}
+
+9. Pembuatan Controllers 
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:controller PengarangController --resource
+
+   INFO  Controller [D:\Xampp\htdocs\LaravelApp\app\Http\Controllers\PengarangController.php] created successfully.  
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:controller PenerbitController --resource 
+
+   INFO  Controller [D:\Xampp\htdocs\LaravelApp\app\Http\Controllers\PenerbitController.php] created successfully.  
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:controller KategoriController --resource
+
+   INFO  Controller [D:\Xampp\htdocs\LaravelApp\app\Http\Controllers\KategoriController.php] created successfully.  
+
+PS D:\Xampp\htdocs\LaravelApp> php artisan make:controller BukuController --resource    
+
+   INFO  Controller [D:\Xampp\htdocs\LaravelApp\app\Http\Controllers\BukuController.php] created successfully.
+
+10. Update FIle Controllers
+- PengarangController
+- PenerbitController
+- KategoriController
+- BukuController
+use DB;
+public function index()
+    {
+        //Tampilkan seluruh data Buku
+        $ar_buku = DB::table('buku') //join table dgn query Bulider Laravel
+        ->join('pengarang','pengarang.id','=','buku.idpengarang')
+        ->join('penerbit','penerbit.id','=','buku.idpenerbit')
+        ->join('kategori','kategori.id','=','buku.kategori_id')
+        ->select('buku.*','pengarang.nama AS nama','penerbit.nama AS pen',
+                'kategori.nama AS kat')->get();
+        return view('buku.index',compact('ar_buku'));
+    }
+
+11. Pembuatan views/buku/index.blade.php
+@extends('adminlte::page')  
+@section('title', 'Data Buku')  
+@section('content_header')
+<h1>Data Buku</h1>  
+@stop  
+@section('content')
+@php
+$ar_judul = ['No','ISBN','Judul','Stok','Pengarang','Penerbit','Kategori'];
+$no = 1;
+@endphp
+
+
+
+<div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Daftar Buku</h3>
+                <br/><br/>
+                <a class="btn btn-info btn-md" href="#"  role="button">Tambah Buku&nbsp;&nbsp;<i class="fa fa-plus"></i></a>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            @foreach($ar_judul as $jdl)
+                                <th>{{ $jdl }}</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($ar_buku as $buku)
+                        <tr>
+                            <td>{{ $no++ }}</td>
+                            <td>{{ $buku->isbn }}</td>
+                            <td>{{ $buku->judul }}</td>
+                            <td>{{ $buku->stok }}</td>
+                            <td>{{ $buku->nama }}</td>
+                            <td>{{ $buku->pen }}</td>
+                            <td>{{ $buku->kat }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+</div>
+@stop
+
+
+@section('css')
+<link rel="stylesheet" href="/css/admin_custom.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css')}}">
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
+@stop
+@section('js')
+<!-- <script> console.log('Hi!'); </script> -->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": true,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+<!-- jQuery -->
+<script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{{ asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{ asset('plugins/jszip/jszip.min.js')}}"></script>
+<script src="{{ asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{ asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+<script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+<!-- JSZip -->
+<script src="{{ asset('plugins/jszip/jszip.min.js')}}"></script>
+<!-- pdfmake -->
+<script src="{{ asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{ asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
+<!-- AdminLTE App -->
+<script src="{{ asset('dist/js/adminlte.min.js')}}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ asset('dist/js/demo.js')}}"></script>
+<!-- Page specific script -->
+
+@stop
+
+12. //Menambahkan Route Pengarang, Penerbit, Kategori, Buku
+Route::resource('/pengarang',PengarangController::class);
+Route::resource('/penerbit',PenerbitController::class);
+Route::resource('/kategori',KategoriController::class);
+Route::resource('/buku',BukuController::class);
+
+
+
+
