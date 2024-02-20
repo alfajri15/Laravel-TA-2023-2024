@@ -236,6 +236,14 @@ PS D:\Xampp\htdocs\LaravelApp> php artisan make:controller BukuController --reso
 
 10. Update FIle Controllers
 - PengarangController
+use DB;
+public function index()
+    {
+        //dapatkan seluruh data pengarang dengan query builder
+        $ar_pengarang = DB::table('pengarang')->get();
+        //arahkan ke data peagawai
+        return view('pengarang.index',compact('ar_pengarang'));
+    }
 - PenerbitController
 - KategoriController
 - BukuController
