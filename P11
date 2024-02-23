@@ -60,3 +60,10 @@ Barryvdh\DomPDF\ServiceProvider::class,
 Route::get('bukupdf',[BukuController::class, 'bukuPDF']);
 
 4. 
+
+=================================================
+composer require maatwebsite/excel
+
+php artisan make:export UsersExport --model=User
+
+
