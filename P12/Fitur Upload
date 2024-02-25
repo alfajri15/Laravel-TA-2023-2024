@@ -1,0 +1,149 @@
+1. //Pembuatan Route
+Route::resource('/pengarang',PengarangController::class);
+
+2. // Update PengarangController
+use DB;
+use App\Models\Buku;
+public function create()
+    {
+        //mengarahkan ke hal form input
+        return view('pengarang.c_pengarang');
+    }
+
+public function store(Request $request)
+    {
+        //Validasi Upload File 
+        if(!empty($request->foto)){
+            $request->validate([
+            'foto' => 'image|mimes:jpg,jpeg,png,giff|max:2048',
+            ]);
+            $fileName = $request->nama.','
+            .$request->foto->extension();
+            $request->foto
+            ->move(public_path('images'), $fileName);
+            }else{
+            $fileName = '';
+            }
+        //proses validasi data
+        $validasi = $request->validate(
+            [
+                'nama'=>'required|max:50',  
+                'email'=>'required',
+                'hp'=>'required',
+            ],
+            //menampilkan pesan kesalahan
+            [
+                'nama.required'=>'Nama Wajib di Isi',  
+                'email.required'=>'Email Wajib di Isi',
+                'hp.required'=>'No Hp Wajib di Isi',
+            ],
+            );
+            //proses input data tangkap request dari form input
+            DB::table('pengarang')->insert(
+            [
+                'nama'=>$request->nama,  
+                'email'=>$request->email,  
+                'hp'=>$request->hp,
+                'foto'=>$fileName,
+            ]
+            );
+            //landing page
+            return redirect('/pengarang');
+    }
+
+3. Pembuatan Views\pengarang\c_pengarang
+@extends('adminlte::page')  
+@section('title', 'Form Pengarang')  
+@section('content_header')
+<h1>Form Pengarang</h1>  
+@stop  
+@section('content')
+
+<div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-user"></i></h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form action="{{ route('pengarang.store') }}" method="POST" enctype="multipart/form-data">
+              @csrf
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="nama">Nama</label>
+                    <input type="text" class="form-control" name="nama" placeholder="nama">
+                  </div>
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" class="form-control" name="email" placeholder="email">
+                  </div>
+                  <div class="form-group">
+                    <label for="hp">No Hp</label>
+                    <input type="text" class="form-control" name="hp" placeholder="No Hp">
+                  </div>
+                  <div class="form-group">
+                    <label for="foto">Foto</label>
+                    <input type="file" class="form-control" name="foto">
+                  </div>
+                  
+                  @if($errors->any())
+                    <div class="alert alert-danger">
+                    <ul>
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>  
+                    @endforeach
+                    </ul>
+                    </div>
+                    @endif
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-info">Submit</button>
+                  <a class="btn btn-info float-right" href="../pengarang"  role="button">Back&nbsp;&nbsp;<i class="fa fa-arrow-left"></i></a>
+                </div>
+              </form>
+            </div>
+            <!-- /.card -->
+            @stop
+
+
+@section('css')
+<link rel="stylesheet" href="/css/admin_custom.css">
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css')}}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css')}}">
+@stop
+@section('js')
+<script>
+$(function () {
+  bsCustomFileInput.init();
+});
+</script>
+<!-- jQuery -->
+<script src="{{ asset('plugins/jquery/jquery.min.js')}}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- bs-custom-file-input -->
+<script src="{{ asset('plugins/bs-custom-file-input/bs-custom-file-input.min.js')}}"></script>
+<!-- AdminLTE App -->
+<script src="{{ asset('dist/js/adminlte.min.js')}}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ asset('dist/js/demo.js')}}"></script>
+<!-- Page specific script -->
+@stop
+
+4. Penambahan sintax "td.foto" pada pengarang.index
+<td width="20%">  @php
+  if(!empty($prg->foto)){
+  @endphp
+    <img src="{{ asset('images')}}/{{$prg->foto }}" width="80%" />
+  @php
+  }else{  @endphp
+    <img src="{{ asset('images')}}/nophoto.jpg" width="80%" />
+    @php
+    }
+    @endphp
+    </td>
