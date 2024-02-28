@@ -1,0 +1,92 @@
+1. Untuk installasi Api, langkahnya buka terminal/CMD, lalu masuk ke folder Document  Root web server Anda, misal di windows di E:\xampp\htdocs. Lalu ketikkan perintah  seperti di bawah ini:
+composer create-project --prefer-dist laravel/laravel laravel-api
+
+2. Pindah direktori
+cd .\laravel-api\
+
+3. running Aps
+D:\Xampp\htdocs\LaravelApp\laravel-api> php artisan serve
+
+4. Menyambungkan ke Database update di .env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=db_mhs
+DB_USERNAME=root
+DB_PASSWORD=
+
+5. Pembuatan migrasi table jurusan
+php artisan make:migration create_jurusan_table
+
+6. Update di Folder migration
+public function up(): void
+    {
+        Schema::create('jurusan', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->string('singkatan');
+            $table->integer('jumlah');
+            $table->timestamps();
+        });
+    }
+
+7. Pembuatan migration table mahasantri
+php artisan make:migration create_mahasantri_table
+
+8. Update folder migration
+public function up(): void
+    {
+        Schema::create('mahasantri', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->integer('idjurusan');
+            $table->string('umur');
+            $table->string('alamat');
+            $table->timestamps();
+        });
+    }
+
+9. running untuk mengirimkan data ke database db_mhs
+php artisan migrate
+
+10. Pembuatan model
+PS D:\Xampp\htdocs\LaravelApp\laravel-api> php artisan make:model Mahasantri
+
+   INFO  Model [D:\Xampp\htdocs\LaravelApp\laravel-api\app\Models\Mahasantri.php] created successfully.
+
+PS D:\Xampp\htdocs\LaravelApp\laravel-api> php artisan make:model Jurusan   
+
+   INFO  Model [D:\Xampp\htdocs\LaravelApp\laravel-api\app\Models\Jurusan.php] created successfully.
+
+10. Update Models
+class Mahasantri extends Model
+{
+    use HasFactory;
+    //koneksi ke tabel Mahasantri
+    protected $table = 'mahasantri';
+}
+
+class Jurusan extends Model
+{
+    use HasFactory;
+    //koneksi ke tabel Jurusan
+    protected $table = 'jurusan';
+}
+
+11. Pembuatan Controller
+PS D:\Xampp\htdocs\LaravelApp\laravel-api> php artisan make:controller MahasantriController
+
+   INFO  Controller [D:\Xampp\htdocs\LaravelApp\laravel-api\app\Http\Controllers\MahasantriController.php] created successfully.     
+
+PS D:\Xampp\htdocs\LaravelApp\laravel-api> php artisan make:controller ControllerController
+
+   INFO  Controller [D:\Xampp\htdocs\LaravelApp\laravel-api\app\Http\Controllers\ControllerController.php] created successfully.
+
+12. Update api.php
+use App\Http\Controllers\MahasantriController;
+use App\Http\Controllers\JurusanController;
+
+Route::apiResource('/mahasantri',MahasantriController::class);
+Route::apiResource('/jurusan',JurusanController::class);
+
+13. Update Controller
