@@ -90,3 +90,22 @@ Route::apiResource('/mahasantri',MahasantriController::class);
 Route::apiResource('/jurusan',JurusanController::class);
 
 13. Update Controller
+//digunakan untuk menampilkan data mahasantri
+        $mhs = Mahasantri::all();
+        if(isset($mhs)){
+            $hasil = [
+                "message" => "Data Mahasantri",
+                "data" => $mhs
+            ];
+            return response()->json($hasil, 200);
+        } else {
+            $fails = [
+                "message" => "Data Mahasantri Tidak Ditemukan",
+                "data" => $mhs
+            ];
+            return response()->json($fails, 404);
+        }
+
+14. ubah table mahasantri menjadi mahasantris dgn cara klik table mahasantri dan pilih menu operation kemudian lakukan perubahan
+
+15. 
